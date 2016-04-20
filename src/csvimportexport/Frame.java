@@ -5,7 +5,9 @@
  */
 package csvimportexport;
 
+import java.awt.event.ActionEvent;
 import java.io.File;
+
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
 
@@ -15,7 +17,9 @@ import javax.swing.filechooser.FileFilter;
  */
 public class Frame extends javax.swing.JFrame {
 
-    /**
+	private static final long serialVersionUID = -6167611413304733784L;
+
+	/**
      * Creates new form Frame
      */
     public Frame() {
@@ -43,6 +47,11 @@ public class Frame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         exportTableWord.setText("Export (Table Word)");
+        exportTableWord.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportTableWordActionPerformed(evt);
+            }
+        });
 
         jScrollPane2.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         jScrollPane2.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -111,6 +120,11 @@ public class Frame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+	private void exportTableWordActionPerformed(ActionEvent evt) {
+		// TODO Far scegliere all'utente dove salvare il file docx.
+		new WordWriter().writeTableToWord(table, "csv.docx");
+	}
+
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
         JFileChooser chooser=new JFileChooser();
         chooser.setFileFilter(new FileFilter() {
@@ -130,7 +144,10 @@ public class Frame extends javax.swing.JFrame {
         chooser.showOpenDialog(null);
         String path = chooser.getSelectedFile().getAbsolutePath();
         //String filename = chooser.getSelectedFile().getName();
-        ReadCSV readCsv = new ReadCSV(path, table);
+
+        // TODO far scegliere all'utente il separatore
+        CsvReader csvReader = new CsvReader();
+        csvReader.loadCsvInTable(path, ";", table);
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
