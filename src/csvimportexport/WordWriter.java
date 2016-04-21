@@ -29,8 +29,11 @@ public class WordWriter {
 
 			for (int i = 0; i < uiTable.getModel().getRowCount(); i++) {
 				for (int j = 0; j < Math.min(uiTable.getModel().getColumnCount(), MSWORD_TABLE_MAX_COLUMNS); j++) {
-					table.getRow(i).getCell(j).setText(uiTable.getModel().getValueAt(i, j).toString());
-				}
+                                        if(uiTable.getModel().getValueAt(i, j) != null)
+                                                table.getRow(i).getCell(j).setText(uiTable.getModel().getValueAt(i, j).toString());
+                                        else
+                                                table.getRow(i).getCell(j).setText("");
+				}   
 			}
 
 			// Salvataggio file docx

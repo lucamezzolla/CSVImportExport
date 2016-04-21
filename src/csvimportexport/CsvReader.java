@@ -63,13 +63,4 @@ public class CsvReader {
 		}
 	}
 
-	// public static boolean isElementExists(String[] data, int index){
-	// try {
-	// String value = data[index];
-	// return true;
-	// } catch(ArrayIndexOutOfBoundsException e){
-	// return false;
-	// }
-	// }
-
 }

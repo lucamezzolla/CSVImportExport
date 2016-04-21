@@ -1,27 +1,23 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package csvimportexport;
 
-import java.awt.event.ActionEvent;
+import java.awt.Cursor;
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 /**
  *
  * @author luca.mezzolla
  */
-public class Frame extends javax.swing.JFrame {
+public class Frame extends javax.swing.JFrame implements SetSeparator {
 
-	private static final long serialVersionUID = -6167611413304733784L;
-
-	/**
-     * Creates new form Frame
-     */
+    private static final long serialVersionUID = -6167611413304733784L;
+    private String separator = "";
+    
     public Frame() {
         initComponents();
     }
@@ -38,6 +34,7 @@ public class Frame extends javax.swing.JFrame {
         exportTableWord = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
+        removeColumnButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem2 = new javax.swing.JMenuItem();
@@ -45,8 +42,10 @@ public class Frame extends javax.swing.JFrame {
         jMenuItem3 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CSV Import Export");
 
-        exportTableWord.setText("Export (Table Word)");
+        exportTableWord.setText("Export in .docx");
+        exportTableWord.setEnabled(false);
         exportTableWord.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 exportTableWordActionPerformed(evt);
@@ -67,11 +66,26 @@ public class Frame extends javax.swing.JFrame {
         ));
         table.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_OFF);
         table.setAutoscrolls(false);
+        table.setColumnSelectionAllowed(true);
         jScrollPane2.setViewportView(table);
+
+        removeColumnButton.setText("Remove Columns");
+        removeColumnButton.setEnabled(false);
+        removeColumnButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeColumnButtonActionPerformed(evt);
+            }
+        });
 
         jMenu1.setText("File");
 
         jMenuItem2.setText("New");
+        jMenuItem2.setEnabled(false);
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
         jMenu1.add(jMenuItem2);
 
         jMenuItem1.setText("Open...");
@@ -101,31 +115,37 @@ public class Frame extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 626, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(exportTableWord))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE))
+                        .addComponent(removeColumnButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(exportTableWord)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(exportTableWord)
+                    .addComponent(removeColumnButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(exportTableWord)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-	private void exportTableWordActionPerformed(ActionEvent evt) {
-		// TODO Far scegliere all'utente dove salvare il file docx.
-		new WordWriter().writeTableToWord(table, "csv.docx");
-	}
-
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        GetSeparatorFrame gsf = new GetSeparatorFrame();
+        gsf.setLocationRelativeTo(this);
+        gsf.setListener(this);
+        gsf.setVisible(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void chooseFile() {
         JFileChooser chooser=new JFileChooser();
         chooser.setFileFilter(new FileFilter() {
             @Override
@@ -141,18 +161,47 @@ public class Frame extends javax.swing.JFrame {
                 return "CSV File (*.csv)";
             }
         });
-        chooser.showOpenDialog(null);
-        String path = chooser.getSelectedFile().getAbsolutePath();
-        //String filename = chooser.getSelectedFile().getName();
-
-        // TODO far scegliere all'utente il separatore
-        CsvReader csvReader = new CsvReader();
-        csvReader.loadCsvInTable(path, ";", table);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
-
+        chooser.showOpenDialog(null);       
+        if(chooser.getSelectedFile() != null) {
+                String path = chooser.getSelectedFile().getAbsolutePath();
+                CsvReader csvReader = new CsvReader();
+                csvReader.loadCsvInTable(path, separator, table);
+                //item and buttons enabled
+                jMenuItem2.setEnabled(true); //NEW
+                jMenuItem1.setEnabled(false); //OPEN
+                removeColumnButton.setEnabled(true);
+                exportTableWord.setEnabled(true);
+        }
+    }
+    
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         System.exit(0);
     }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void exportTableWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportTableWordActionPerformed
+            //
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            Date date = new Date();
+            SimpleDateFormat format = new SimpleDateFormat("yyyyymmddhhmmss");
+            String formattedDate = format.format(date);
+            //
+            new WordWriter().writeTableToWord(table, formattedDate+".docx");
+            //
+            setCursor(Cursor.getDefaultCursor());
+            JOptionPane.showMessageDialog(null, "Done!");
+    }//GEN-LAST:event_exportTableWordActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        dispose();
+        MainClass.run();
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
+    private void removeColumnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeColumnButtonActionPerformed
+        RemoveColumnFrame rcf = new RemoveColumnFrame(table);
+        rcf.setLocationRelativeTo(this);
+        rcf.setVisible(true);
+        rcf.buildUI();
+    }//GEN-LAST:event_removeColumnButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton exportTableWord;
@@ -162,6 +211,14 @@ public class Frame extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JButton removeColumnButton;
     private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void setSeparator(String text) {
+        separator = text;
+        chooseFile();
+    }
+
 }
