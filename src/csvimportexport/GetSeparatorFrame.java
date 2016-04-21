@@ -36,7 +36,6 @@ public class GetSeparatorFrame extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Set separator");
-        setAlwaysOnTop(true);
         setResizable(false);
 
         jLabel1.setText("Type a separator for importation:");
