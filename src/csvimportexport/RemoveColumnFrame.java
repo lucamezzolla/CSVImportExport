@@ -4,9 +4,10 @@ import java.awt.Toolkit;
 import java.util.Vector;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.JRootPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.text.DefaultEditorKit;
 
 /**
  *
@@ -21,6 +22,8 @@ public class RemoveColumnFrame extends javax.swing.JFrame {
         initComponents();
         this.table = table;
         listModel = new DefaultListModel();
+        JRootPane rootPane = SwingUtilities.getRootPane(submitButton); 
+        rootPane.setDefaultButton(submitButton);
     }
     
     public void buildUI() {
@@ -45,18 +48,19 @@ public class RemoveColumnFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new javax.swing.JButton();
+        submitButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         columnsList = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Remove Columns");
+        setAlwaysOnTop(true);
         setResizable(false);
 
-        jButton1.setText("OK");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        submitButton.setText("OK");
+        submitButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                submitButtonActionPerformed(evt);
             }
         });
 
@@ -74,7 +78,7 @@ public class RemoveColumnFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 333, Short.MAX_VALUE)
-                        .addComponent(jButton1))
+                        .addComponent(submitButton))
                     .addComponent(jScrollPane1))
                 .addContainerGap())
         );
@@ -84,14 +88,14 @@ public class RemoveColumnFrame extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 189, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton1)
+                .addComponent(submitButton)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void submitButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_submitButtonActionPerformed
         Vector columns = new Vector();
         if(listModel.size() > 0) {
             for(String column : columnsList.getSelectedValuesList()) {
@@ -100,7 +104,7 @@ public class RemoveColumnFrame extends javax.swing.JFrame {
             }
         }       
         dispose();
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_submitButtonActionPerformed
 
     private int getColumnIndex (JTable table, String header) {
         for (int i=0; i < table.getColumnCount(); i++) {
@@ -134,7 +138,7 @@ public class RemoveColumnFrame extends javax.swing.JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JList<String> columnsList;
-    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JButton submitButton;
     // End of variables declaration//GEN-END:variables
 }
