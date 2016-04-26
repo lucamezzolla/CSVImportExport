@@ -2,9 +2,7 @@ package csvimportexport;
 
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
-
 import javax.swing.JTable;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;

@@ -77,6 +77,8 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="filtersButton" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
+                      <Component id="exportInExcelButton" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="exportInWordButton" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -92,6 +94,7 @@
                   <Component id="exportInWordButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="removeColumnsButton" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="filtersButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="exportInExcelButton" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jScrollPane2" pref="449" max="32767" attributes="0"/>
@@ -147,6 +150,15 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="filtersButtonActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="exportInExcelButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Export in .xlsx"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportInExcelButtonActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

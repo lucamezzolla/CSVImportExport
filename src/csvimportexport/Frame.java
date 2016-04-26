@@ -7,7 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
@@ -42,6 +43,7 @@ public class Frame extends javax.swing.JFrame implements SetSeparator, ApplyFilt
         table = new javax.swing.JTable();
         removeColumnsButton = new javax.swing.JButton();
         filtersButton = new javax.swing.JButton();
+        exportInExcelButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         newMenuItem = new javax.swing.JMenuItem();
@@ -94,6 +96,14 @@ public class Frame extends javax.swing.JFrame implements SetSeparator, ApplyFilt
             }
         });
 
+        exportInExcelButton.setText("Export in .xlsx");
+        exportInExcelButton.setEnabled(false);
+        exportInExcelButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportInExcelButtonActionPerformed(evt);
+            }
+        });
+
         fileMenu.setText("File");
 
         newMenuItem.setText("New");
@@ -138,6 +148,8 @@ public class Frame extends javax.swing.JFrame implements SetSeparator, ApplyFilt
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(filtersButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(exportInExcelButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(exportInWordButton)))
                 .addContainerGap())
         );
@@ -148,7 +160,8 @@ public class Frame extends javax.swing.JFrame implements SetSeparator, ApplyFilt
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportInWordButton)
                     .addComponent(removeColumnsButton)
-                    .addComponent(filtersButton))
+                    .addComponent(filtersButton)
+                    .addComponent(exportInExcelButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
                 .addContainerGap())
@@ -190,6 +203,7 @@ public class Frame extends javax.swing.JFrame implements SetSeparator, ApplyFilt
             openMenuItem.setEnabled(false); //OPEN
             filtersButton.setEnabled(true);
             removeColumnsButton.setEnabled(true);
+            exportInExcelButton.setEnabled(true);
             exportInWordButton.setEnabled(true);
         }
     }
@@ -235,8 +249,26 @@ public class Frame extends javax.swing.JFrame implements SetSeparator, ApplyFilt
         }
     }//GEN-LAST:event_filtersButtonActionPerformed
 
+    private void exportInExcelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportInExcelButtonActionPerformed
+        try {
+            //
+            setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+            Date date = new Date();
+            SimpleDateFormat format = new SimpleDateFormat("yyyyymmddhhmmss");
+            String formattedDate = format.format(date);
+            //
+            new ExcelWriter().writeTableToExcel(table, formattedDate+".xlsx");
+            //
+            setCursor(Cursor.getDefaultCursor());
+            JOptionPane.showMessageDialog(null, "Done!");
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+    }//GEN-LAST:event_exportInExcelButtonActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem exitMenuItem;
+    private javax.swing.JButton exportInExcelButton;
     private javax.swing.JButton exportInWordButton;
     private javax.swing.JMenu fileMenu;
     private javax.swing.JButton filtersButton;
