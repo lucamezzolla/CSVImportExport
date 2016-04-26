@@ -1,6 +1,5 @@
 package csvimportexport;
 
-import static csvimportexport.WordWriter.MSWORD_TABLE_MAX_COLUMNS;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -10,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import  org.apache.poi.xssf.usermodel.XSSFSheet;
 import  org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import  org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFTable;
 
 /**
  * 
