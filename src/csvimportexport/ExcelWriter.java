@@ -6,9 +6,9 @@ import java.io.IOException;
 import javax.swing.JTable;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import  org.apache.poi.xssf.usermodel.XSSFSheet;
-import  org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import  org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 
 /**
  * 
@@ -17,11 +17,15 @@ import  org.apache.poi.xssf.usermodel.XSSFRow;
 public class ExcelWriter {
     
     private static final int MSEXCEL_TABLE_MAX_COLUMNS = 63;
-    private static final Log log = LogFactory.getLog(WordWriter.class);
+    private static final Log log = LogFactory.getLog(ExcelWriter.class);
 
 	public void writeTableToExcel(final JTable uiTable, final String outputFileName) throws FileNotFoundException, IOException {
             
             if (uiTable != null && uiTable.getModel() != null && uiTable.getModel().getRowCount() != 0 && uiTable.getModel().getColumnCount() != 0) {
+                
+                if (uiTable.getModel().getColumnCount() > MSEXCEL_TABLE_MAX_COLUMNS) {
+                    log.warn("Numero colonne > 63, export limitato alle prime 63 colonne!");
+                }
                     
                 XSSFWorkbook workbook = new XSSFWorkbook();
                 XSSFSheet sheet = workbook.createSheet("FirstSheet");  
