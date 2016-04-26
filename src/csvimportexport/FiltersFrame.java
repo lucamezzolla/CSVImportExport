@@ -5,11 +5,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-import javax.swing.ListModel;
 
 /**
  *
@@ -36,15 +39,19 @@ public class FiltersFrame extends javax.swing.JFrame {
             String value = (String) prop.get(key);
             model.addElement(key+"="+value);
         }
+        Collection list = Collections.list(model.elements());
+        Collections.sort((List<String>) list);
+        model.clear();
+        for(Object o : list){ model.addElement(o); }
         filtersList.setModel(model);
     }
     
-    public static void exportList(ListModel model, File f) throws IOException {
+    public static void exportList(ArrayList ar, File f) throws IOException {
         PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(f), "UTF-8"));
         try {
-            int len = model.getSize();
+            int len = ar.size();
             for (int i = 0; i < len; i++) {
-                pw.println(model.getElementAt(i).toString());
+                pw.println(ar.get(i));
             }
         } finally {
             pw.close();
@@ -174,7 +181,12 @@ public class FiltersFrame extends javax.swing.JFrame {
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         try {
-            exportList(filtersList.getModel(), new File(MyUtils.FileNames.FILTERS.toString()));
+            ArrayList<String> ar = new ArrayList<>();
+            for(int i = 0; i < filtersList.getModel().getSize(); i++) {
+                ar.add(filtersList.getModel().getElementAt(i));
+            }
+            Collections.sort(ar);
+            exportList(ar, new File(MyUtils.FileNames.FILTERS.toString()));
             dispose();
         } catch (IOException ex) {
             JOptionPane.showConfirmDialog(this, ex.getMessage());

@@ -7,8 +7,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
@@ -49,6 +47,8 @@ public class Frame extends javax.swing.JFrame implements SetSeparator, ApplyFilt
         newMenuItem = new javax.swing.JMenuItem();
         openMenuItem = new javax.swing.JMenuItem();
         exitMenuItem = new javax.swing.JMenuItem();
+        aboutMenu = new javax.swing.JMenu();
+        aboutItem = new javax.swing.JMenuItem();
 
         jMenuItem4.setText("jMenuItem4");
 
@@ -132,6 +132,18 @@ public class Frame extends javax.swing.JFrame implements SetSeparator, ApplyFilt
         fileMenu.add(exitMenuItem);
 
         jMenuBar1.add(fileMenu);
+
+        aboutMenu.setText("?");
+
+        aboutItem.setText("About...");
+        aboutItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                aboutItemActionPerformed(evt);
+            }
+        });
+        aboutMenu.add(aboutItem);
+
+        jMenuBar1.add(aboutMenu);
 
         setJMenuBar(jMenuBar1);
 
@@ -266,7 +278,15 @@ public class Frame extends javax.swing.JFrame implements SetSeparator, ApplyFilt
         }
     }//GEN-LAST:event_exportInExcelButtonActionPerformed
 
+    private void aboutItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutItemActionPerformed
+        AboutFrame about = new AboutFrame();
+        about.setLocationRelativeTo(this);
+        about.setVisible(true);
+    }//GEN-LAST:event_aboutItemActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem aboutItem;
+    private javax.swing.JMenu aboutMenu;
     private javax.swing.JMenuItem exitMenuItem;
     private javax.swing.JButton exportInExcelButton;
     private javax.swing.JButton exportInWordButton;
