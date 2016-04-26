@@ -2,10 +2,15 @@ package csvimportexport;
 
 import java.awt.Cursor;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+import javax.swing.DefaultListModel;
 import javax.swing.JFileChooser;
+import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
@@ -13,7 +18,7 @@ import javax.swing.filechooser.FileFilter;
  *
  * @author luca.mezzolla
  */
-public class Frame extends javax.swing.JFrame implements SetSeparator {
+public class Frame extends javax.swing.JFrame implements SetSeparator, ApplyFiltersInterface {
 
     private static final long serialVersionUID = -6167611413304733784L;
     private String separator = "";
@@ -32,26 +37,27 @@ public class Frame extends javax.swing.JFrame implements SetSeparator {
     private void initComponents() {
 
         jMenuItem4 = new javax.swing.JMenuItem();
-        exportTableWord = new javax.swing.JButton();
+        exportInWordButton = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         table = new javax.swing.JTable();
-        removeColumnButton = new javax.swing.JButton();
+        removeColumnsButton = new javax.swing.JButton();
+        filtersButton = new javax.swing.JButton();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
+        fileMenu = new javax.swing.JMenu();
+        newMenuItem = new javax.swing.JMenuItem();
+        openMenuItem = new javax.swing.JMenuItem();
+        exitMenuItem = new javax.swing.JMenuItem();
 
         jMenuItem4.setText("jMenuItem4");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("CSV Import Export");
 
-        exportTableWord.setText("Export in .docx");
-        exportTableWord.setEnabled(false);
-        exportTableWord.addActionListener(new java.awt.event.ActionListener() {
+        exportInWordButton.setText("Export in .docx");
+        exportInWordButton.setEnabled(false);
+        exportInWordButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                exportTableWordActionPerformed(evt);
+                exportInWordButtonActionPerformed(evt);
             }
         });
 
@@ -72,42 +78,50 @@ public class Frame extends javax.swing.JFrame implements SetSeparator {
         table.setColumnSelectionAllowed(true);
         jScrollPane2.setViewportView(table);
 
-        removeColumnButton.setText("Remove Columns");
-        removeColumnButton.setEnabled(false);
-        removeColumnButton.addActionListener(new java.awt.event.ActionListener() {
+        removeColumnsButton.setText("Remove Columns");
+        removeColumnsButton.setEnabled(false);
+        removeColumnsButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                removeColumnButtonActionPerformed(evt);
+                removeColumnsButtonActionPerformed(evt);
             }
         });
 
-        jMenu1.setText("File");
-
-        jMenuItem2.setText("New");
-        jMenuItem2.setEnabled(false);
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        filtersButton.setText("Filters");
+        filtersButton.setEnabled(false);
+        filtersButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                filtersButtonActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem2);
 
-        jMenuItem1.setText("Open...");
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        fileMenu.setText("File");
+
+        newMenuItem.setText("New");
+        newMenuItem.setEnabled(false);
+        newMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                newMenuItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        fileMenu.add(newMenuItem);
 
-        jMenuItem3.setText("Exit");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+        openMenuItem.setText("Open...");
+        openMenuItem.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
+                openMenuItemActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem3);
+        fileMenu.add(openMenuItem);
 
-        jMenuBar1.add(jMenu1);
+        exitMenuItem.setText("Exit");
+        exitMenuItem.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exitMenuItemActionPerformed(evt);
+            }
+        });
+        fileMenu.add(exitMenuItem);
+
+        jMenuBar1.add(fileMenu);
 
         setJMenuBar(jMenuBar1);
 
@@ -118,12 +132,13 @@ public class Frame extends javax.swing.JFrame implements SetSeparator {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 626, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 616, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(removeColumnButton)
+                        .addComponent(removeColumnsButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(exportTableWord)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(filtersButton)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(exportInWordButton)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -131,8 +146,9 @@ public class Frame extends javax.swing.JFrame implements SetSeparator {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(exportTableWord)
-                    .addComponent(removeColumnButton))
+                    .addComponent(exportInWordButton)
+                    .addComponent(removeColumnsButton)
+                    .addComponent(filtersButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE)
                 .addContainerGap())
@@ -141,12 +157,12 @@ public class Frame extends javax.swing.JFrame implements SetSeparator {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void openMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openMenuItemActionPerformed
         GetSeparatorFrame gsf = new GetSeparatorFrame();
         gsf.setLocationRelativeTo(this);
         gsf.setListener(this);
         gsf.setVisible(true);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_openMenuItemActionPerformed
 
     private void chooseFile() {
         JFileChooser chooser=new JFileChooser();
@@ -166,22 +182,23 @@ public class Frame extends javax.swing.JFrame implements SetSeparator {
         });
         chooser.showOpenDialog(null);       
         if(chooser.getSelectedFile() != null) {
-                String path = chooser.getSelectedFile().getAbsolutePath();
-                CsvReader csvReader = new CsvReader();
-                csvReader.loadCsvInTable(path, separator, table);
-                //item and buttons enabled
-                jMenuItem2.setEnabled(true); //NEW
-                jMenuItem1.setEnabled(false); //OPEN
-                removeColumnButton.setEnabled(true);
-                exportTableWord.setEnabled(true);
+            String path = chooser.getSelectedFile().getAbsolutePath();
+            CsvReader csvReader = new CsvReader();
+            csvReader.loadCsvInTable(path, separator, table);
+            //item and buttons enabled
+            newMenuItem.setEnabled(true); //NEW
+            openMenuItem.setEnabled(false); //OPEN
+            filtersButton.setEnabled(true);
+            removeColumnsButton.setEnabled(true);
+            exportInWordButton.setEnabled(true);
         }
     }
     
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+    private void exitMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exitMenuItemActionPerformed
         System.exit(0);
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+    }//GEN-LAST:event_exitMenuItemActionPerformed
 
-    private void exportTableWordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportTableWordActionPerformed
+    private void exportInWordButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportInWordButtonActionPerformed
             //
             setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
             Date date = new Date();
@@ -192,30 +209,43 @@ public class Frame extends javax.swing.JFrame implements SetSeparator {
             //
             setCursor(Cursor.getDefaultCursor());
             JOptionPane.showMessageDialog(null, "Done!");
-    }//GEN-LAST:event_exportTableWordActionPerformed
+    }//GEN-LAST:event_exportInWordButtonActionPerformed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void newMenuItemActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_newMenuItemActionPerformed
         dispose();
         MainClass.run();
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_newMenuItemActionPerformed
 
-    private void removeColumnButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeColumnButtonActionPerformed
+    private void removeColumnsButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeColumnsButtonActionPerformed
         RemoveColumnFrame rcf = new RemoveColumnFrame(table);
         rcf.setLocationRelativeTo(this);
         rcf.setVisible(true);
         rcf.buildUI();
-    }//GEN-LAST:event_removeColumnButtonActionPerformed
+    }//GEN-LAST:event_removeColumnsButtonActionPerformed
+
+    private void filtersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_filtersButtonActionPerformed
+        try {
+            FiltersFrame filtersFrame = new FiltersFrame();
+            filtersFrame.setListener(this);
+            filtersFrame.setProp();
+            filtersFrame.setLocationRelativeTo(null);
+            filtersFrame.setVisible(true);
+        } catch (IOException ex) {
+            JOptionPane.showConfirmDialog(this, ex.getMessage());
+        }
+    }//GEN-LAST:event_filtersButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton exportTableWord;
-    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuItem exitMenuItem;
+    private javax.swing.JButton exportInWordButton;
+    private javax.swing.JMenu fileMenu;
+    private javax.swing.JButton filtersButton;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JButton removeColumnButton;
+    private javax.swing.JMenuItem newMenuItem;
+    private javax.swing.JMenuItem openMenuItem;
+    private javax.swing.JButton removeColumnsButton;
     private javax.swing.JTable table;
     // End of variables declaration//GEN-END:variables
 
@@ -223,6 +253,31 @@ public class Frame extends javax.swing.JFrame implements SetSeparator {
     public void setSeparator(String text) {
         separator = text;
         chooseFile();
+    }
+
+    @Override
+    public void applyFilters(JList list) {
+        setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        int countRow = table.getRowCount();
+        int countCol = table.getColumnCount();
+        DefaultListModel model = (DefaultListModel) list.getModel();
+        Map<String, String> array = new HashMap<>();
+        for(int i = 0; i < model.getSize(); i++) {
+            String foo = (String) model.get(i);
+            String[] fooSplit = foo.split("=");
+            String key = fooSplit[0];
+            String value = fooSplit[1];
+            array.put(key, value);
+        }
+        for(int i = 0; i < countRow; i++) {
+            for(int j = 0; j < countCol; j++) {
+                String valueAt = (String) table.getValueAt(i, j);
+                if(array.containsKey(valueAt)) {
+                    table.setValueAt(array.get(valueAt), i, j);
+                }
+            }
+        }
+        setCursor(Cursor.getDefaultCursor());
     }
 
 }

@@ -1,14 +1,15 @@
 package csvimportexport;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.Enumeration;
-import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
+import javax.swing.ListModel;
 
 /**
  *
@@ -16,12 +17,15 @@ import javax.swing.JOptionPane;
  */
 public class FiltersFrame extends javax.swing.JFrame {
 
-    private final Properties prop;
+    private Properties prop;
+    private ApplyFiltersInterface listener;
     
-    public FiltersFrame(Properties prop) {
+    public FiltersFrame() {
         initComponents();
-        this.prop = prop;
-        printList();
+    }
+
+    public void setListener(ApplyFiltersInterface listener) {
+        this.listener = listener;
     }
     
     private void printList() {
@@ -30,9 +34,21 @@ public class FiltersFrame extends javax.swing.JFrame {
         while(em.hasMoreElements()){
             String key = (String) em.nextElement();
             String value = (String) prop.get(key);
-            model.addElement(key+" = "+value);
+            model.addElement(key+"="+value);
         }
         filtersList.setModel(model);
+    }
+    
+    public static void exportList(ListModel model, File f) throws IOException {
+        PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(f), "UTF-8"));
+        try {
+            int len = model.getSize();
+            for (int i = 0; i < len; i++) {
+                pw.println(model.getElementAt(i).toString());
+            }
+        } finally {
+            pw.close();
+        }
     }
 
     /**
@@ -48,13 +64,13 @@ public class FiltersFrame extends javax.swing.JFrame {
         text2 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        addFilterButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         filtersList = new javax.swing.JList<>();
         saveButton = new javax.swing.JButton();
         removeFilterButton = new javax.swing.JButton();
         removeAllFiltersButton = new javax.swing.JButton();
-        closeButton = new javax.swing.JButton();
+        applyButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Filters");
@@ -64,16 +80,16 @@ public class FiltersFrame extends javax.swing.JFrame {
 
         jLabel2.setText("Value (case sensitive):");
 
-        jButton1.setText("Add Filter");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        addFilterButton.setText("Add Filter");
+        addFilterButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                addFilterButtonActionPerformed(evt);
             }
         });
 
         jScrollPane1.setViewportView(filtersList);
 
-        saveButton.setText("Save");
+        saveButton.setText("Save and Close");
         saveButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 saveButtonActionPerformed(evt);
@@ -81,13 +97,23 @@ public class FiltersFrame extends javax.swing.JFrame {
         });
 
         removeFilterButton.setText("Remove");
+        removeFilterButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                removeFilterButtonActionPerformed(evt);
+            }
+        });
 
         removeAllFiltersButton.setText("Remove All");
-
-        closeButton.setText("Close");
-        closeButton.addActionListener(new java.awt.event.ActionListener() {
+        removeAllFiltersButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                closeButtonActionPerformed(evt);
+                removeAllFiltersButtonActionPerformed(evt);
+            }
+        });
+
+        applyButton.setText("Apply");
+        applyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                applyButtonActionPerformed(evt);
             }
         });
 
@@ -108,16 +134,16 @@ public class FiltersFrame extends javax.swing.JFrame {
                             .addComponent(text2)
                             .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 180, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1)
+                        .addComponent(addFilterButton)
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(removeAllFiltersButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(removeFilterButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(saveButton)
+                        .addComponent(applyButton)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(closeButton)))
+                        .addComponent(saveButton)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -131,7 +157,7 @@ public class FiltersFrame extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(text1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(text2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(addFilterButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -139,7 +165,7 @@ public class FiltersFrame extends javax.swing.JFrame {
                     .addComponent(saveButton)
                     .addComponent(removeFilterButton)
                     .addComponent(removeAllFiltersButton)
-                    .addComponent(closeButton))
+                    .addComponent(applyButton))
                 .addContainerGap())
         );
 
@@ -148,29 +174,54 @@ public class FiltersFrame extends javax.swing.JFrame {
 
     private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
         try {
-            prop.store(new FileOutputStream("filters.properties"), null);
+            exportList(filtersList.getModel(), new File(MyUtils.FileNames.FILTERS.toString()));
+            dispose();
         } catch (IOException ex) {
             JOptionPane.showConfirmDialog(this, ex.getMessage());
         }
     }//GEN-LAST:event_saveButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void addFilterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addFilterButtonActionPerformed
         if(text1.getText().length() > 0 && text2.getText().length() > 0) {
-            prop.put(text1, text2);
-            
+            prop.put(text1.getText(), text2.getText());
+            text1.setText("");
+            text2.setText("");
+            printList();
         } else {
             JOptionPane.showConfirmDialog(this, "Error: empty fields!");
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_addFilterButtonActionPerformed
 
-    private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
-        dispose();
-    }//GEN-LAST:event_closeButtonActionPerformed
+    private void removeFilterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeFilterButtonActionPerformed
+        if(filtersList.getSelectedValue() != null) {
+            String[] splitString = filtersList.getSelectedValue().split("=");
+            String key = splitString[0];
+            prop.remove(key);
+            printList();
+        }
+    }//GEN-LAST:event_removeFilterButtonActionPerformed
 
+    private void removeAllFiltersButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_removeAllFiltersButtonActionPerformed
+        prop.clear();
+        printList();
+    }//GEN-LAST:event_removeAllFiltersButtonActionPerformed
+
+    private void applyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_applyButtonActionPerformed
+        if(listener != null) {
+            listener.applyFilters(filtersList);
+        }
+    }//GEN-LAST:event_applyButtonActionPerformed
+
+    public void setProp() throws IOException {
+        PropReader propReader = new PropReader(MyUtils.FileNames.FILTERS.toString());
+        prop = propReader.getProp();
+        printList();
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton closeButton;
+    private javax.swing.JButton addFilterButton;
+    private javax.swing.JButton applyButton;
     private javax.swing.JList<String> filtersList;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
@@ -180,4 +231,5 @@ public class FiltersFrame extends javax.swing.JFrame {
     private javax.swing.JTextField text1;
     private javax.swing.JTextField text2;
     // End of variables declaration//GEN-END:variables
+
 }
